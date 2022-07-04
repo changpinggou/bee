@@ -129,6 +129,8 @@ Page({
   },
   getshopInfo(){
     const shopInfo = wx.getStorageSync('shopInfo')
+    console.log(shopInfo);
+    shopInfo.name = "fight桌球南山店";
     if (shopInfo) {
       this.setData({
         shopInfo: shopInfo,
@@ -166,6 +168,9 @@ Page({
       res.data.forEach(ele => {
         ele.distance = ele.distance.toFixed(1) // 距离保留3位小数
       })
+      // console.log("fetchShops result:");
+      // console.log(res);
+
       this.setData({
         shopInfo: res.data[0],
         shopIsOpened: this.checkIsOpened(res.data[0].openingHours)
@@ -211,13 +216,27 @@ Page({
   // 获取分类
   async categories() {
     const res = await WXAPI.goodsCategory()
+    console.log("WXAPI.goodsCategory()");
+    console.log(res);
     if (res.code != 0) {
       wx.showToast({
         title: res.msg,
         icon: 'none'
       })
       return
-    }    
+    }
+    //add by applechang
+    res.data.splice(0,1,{
+      badge:0,
+      id:10001,
+      isUse:true,
+      level:1,
+      name:"1号馆",
+      paixu:0,
+      pid:0,
+      shopId:0,
+      userId:123456
+    });
     this.setData({
       page: 1,
       categories: res.data,
@@ -231,6 +250,8 @@ Page({
   },
   async getGoodsList() {
     const shop_goods_split = wx.getStorageSync('shop_goods_split')
+    console.log("shop_goods_split:");
+    console.log(shop_goods_split);
     if (shop_goods_split == '1') {
       // 商品需要区分门店
       const shopIds = wx.getStorageSync('shopIds') // 当前选择的门店
@@ -722,12 +743,12 @@ Page({
     })
   },
   async noticeLastOne() {
-    const res = await WXAPI.noticeLastOne()
-    if (res.code == 0) {
+    // const res = await WXAPI.noticeLastOne()
+    // if (res.code == 0) {
       this.setData({
-        noticeLastOne: res.data
+        noticeLastOne: {title:"我是跑马灯广告", id:"1"}
       })
-    }
+    // }
   },
   goNotice(e) {
     const id = e.currentTarget.dataset.id
@@ -737,6 +758,8 @@ Page({
   },
   async banners() {
     const res = await WXAPI.banners()
+    console.log("applechang-banners()");
+    console.log(res);
     if (res.code == 0) {
       this.setData({
         banners: res.data
